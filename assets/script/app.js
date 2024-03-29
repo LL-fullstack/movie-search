@@ -1,42 +1,48 @@
 'use strict';
 
-import { }
+import movies from './movies.js';
+import * as utils from './utils.js';
 
 const movieInput = document.getElementById('movieInput');
 const searchBtn = document.getElementById('searchBtn');
 const optionsContainer = document.getElementById('optionsContainer');
 const movieDetails = document.getElementById('movieDetails');
-  
+const errorDialog = document.getElementById("errorDialog");
+const errorDialogCloseButton = document.getElementById("closeButton");
+
 // Function to show search suggestions
 function showSuggestions() {
   const input = movieInput.value.toLowerCase();
   let suggestions = movies.filter(movie => movie.title.toLowerCase().includes(input)).slice(0, 3);
   optionsContainer.innerHTML = '';
-  suggestions.forEach(movie => {
-      const suggestion = document.createElement('a');
-      suggestion.textContent = movie.title;
-      suggestion.onclick = () => {
-          displayMovieDetails(movie);
-          optionsContainer.classList.remove('show');
-      };
-      optionsContainer.appendChild(suggestion);
-  });
-  if (input.length === 0) {
-      optionsContainer.classList.remove('show');
+  console.log(suggestions);
+  if(suggestions === null || suggestions === undefined || suggestions.length <= 0) {
+    const noResultSuggestion = document.createElement('a');
+    noResultSuggestion.textContent ="No result found";
+    optionsContainer.appendChild(noResultSuggestion);
   } else {
-      optionsContainer.classList.add('show');
+    suggestions.forEach(movie => {
+        const suggestion = document.createElement('a');
+        suggestion.textContent = movie.title;
+        suggestion.onclick = () => {
+            displayMovieDetails(movie);
+            optionsContainer.classList.remove('show');
+        };
+        optionsContainer.appendChild(suggestion);
+    });
   }
 }
 
 // Function to search for a movie
 function searchMovie() {
+  showSuggestions();
   const input = movieInput.value.toLowerCase();
   const movie = movies.find(movie => movie.title.toLowerCase() === input);
   if (movie) {
       displayMovieDetails(movie);
       optionsContainer.classList.remove('show');
   } else {
-      alert('Movie not found!');
+    errorDialog.showModal();
   }
 }
 
@@ -52,4 +58,24 @@ function displayMovieDetails(movie) {
   `;
 }
 
+movieInput.addEventListener('input', function(event) {
+    showSuggestions();
+});
+
+movieInput.addEventListener('focus', function(event) {
+    optionsContainer.classList.add('show');
+});
+
+movieInput.addEventListener('focusout', function(event) {
+    optionsContainer.classList.remove('show');
+});
+
+searchBtn.addEventListener('click', function(event) {
+    searchMovie()
+});
+
+errorDialogCloseButton.addEventListener('click', function(event) {
+    errorDialog.close();
+}
+);  
   
