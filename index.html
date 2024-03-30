@@ -14,19 +14,23 @@
         <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
         <script type="module" src="./assets/script/app.js" defer></script>
         <script type="module" src="./assets/script/movies.js" defer></script>
+        <script type="module" src="./assets/script/utils.js" defer></script>
     </head>
     <body>
         <header>
             <h1>CINEMAX</h1>
             <h2>Your favorite movies are here</h2>
         </header>
+       
         <div class="container">
             <div class="dropdown">
-                <input type="text" id="movieInput" placeholder="Type a movie's name here">
+                <input type="text" id="movieInput" autocomplete="off" placeholder="Search">
                 <div id="optionsContainer" class="dropdown-content"></div>
             </div>
-            <button id="searchBtn" onclick="searchMovie()">Search</button>
+            <button id="searchBtn" onclick="searchMovie()">Find Movie</button>
         </div>
-        <div id="movieDetails"></div>
+
+        <section id="movieDetails"></section>
+          
     </body>
 </html>

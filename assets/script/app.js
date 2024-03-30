@@ -7,27 +7,29 @@ const movieInput = document.getElementById('movieInput');
 const searchBtn = document.getElementById('searchBtn');
 const optionsContainer = document.getElementById('optionsContainer');
 const movieDetails = document.getElementById('movieDetails');
-const errorDialog = document.getElementById("errorDialog");
-const errorDialogCloseButton = document.getElementById("closeButton");
 
 // Function to show search suggestions
 function showSuggestions() {
   const input = movieInput.value.toLowerCase();
   let suggestions = movies.filter(movie => movie.title.toLowerCase().includes(input)).slice(0, 3);
   optionsContainer.innerHTML = '';
-  console.log(suggestions);
+  if(input === undefined || input === '') {
+    return;
+  }
+
   if(suggestions === null || suggestions === undefined || suggestions.length <= 0) {
     const noResultSuggestion = document.createElement('a');
     noResultSuggestion.textContent ="No result found";
     optionsContainer.appendChild(noResultSuggestion);
   } else {
     suggestions.forEach(movie => {
-        const suggestion = document.createElement('a');
+        const suggestion = document.createElement('div');
+        suggestion.classList.add('resultSuggestion');
         suggestion.textContent = movie.title;
-        suggestion.onclick = () => {
+        suggestion.addEventListener('click', function(event) {
             displayMovieDetails(movie);
             optionsContainer.classList.remove('show');
-        };
+        })
         optionsContainer.appendChild(suggestion);
     });
   }
@@ -41,21 +43,82 @@ function searchMovie() {
   if (movie) {
       displayMovieDetails(movie);
       optionsContainer.classList.remove('show');
-  } else {
-    errorDialog.showModal();
   }
 }
 
 // Function to display movie details
 function displayMovieDetails(movie) {
-  movieDetails.innerHTML = `
-      <h2>${movie.title}</h2>
-      <p>Year: ${movie.year}</p>
-      <p>Running Time: ${movie.runningTime}</p>
-      <p>Description: ${movie.description}</p>
-      <p>Genres: ${movie.genre.join(', ')}</p>
-      <img src="${movie.poster}" alt="${movie.title}">
-  `;
+   clearInputs();
+
+    // Create the movie banner container
+    let movieBannerContainer = document.createElement('div');
+    movieBannerContainer.classList.add('movie-section');
+
+    // Create div for movie image
+    let movieImageDiv = document.createElement('div');
+    movieImageDiv.classList.add('movie-section');
+    // Create the movie image
+    let movieImg = document.createElement('img');
+    movieImg.classList.add('movie-poster')
+    movieImg.src = movie.poster;
+    // Append user image and user info to user info container
+    movieImageDiv.appendChild(movieImg);
+    
+
+    // Create the movie description column
+    let movieHeader = document.createElement('div');
+    movieHeader.classList.add('movie-description');
+    movieHeader.classList.add('post-row');
+
+    
+
+    // Create the movie info container
+    let movieInfoContainer = document.createElement('div');
+
+
+    // Create the movie info
+    let movieInfo = document.createElement('div');
+   
+    let paragraphTitle = document.createElement('p');
+    paragraphTitle.classList.add('movie-title');
+    paragraphTitle.textContent = movie.title;
+
+
+    // Create the movie launch dates
+    let paragraphLaunch = document.createElement('p');
+    paragraphLaunch.innerHTML = movie.year + ' • ' + movie.runningTime;
+
+    // Create the movie description
+    let paragraphDescription = document.createElement('p');
+    paragraphDescription.textContent = movie.description;
+
+    movieInfoContainer.appendChild(paragraphTitle);
+    movieInfoContainer.appendChild(movieInfo);
+    movieInfoContainer.appendChild(paragraphLaunch);
+    movieInfoContainer.appendChild(paragraphDescription);
+
+
+    // Create the movie info container
+    let genreContainer = document.createElement('div');
+    genreContainer.classList.add('genre-section');
+
+    // Create the movie description
+    movie.genre.forEach( genre => {
+        let paragraphGenres = document.createElement('div');
+        paragraphGenres.classList.add('genres');
+        paragraphGenres.textContent = genre;
+        genreContainer.appendChild(paragraphGenres);
+    }
+    );
+
+    //userInfoContainer.appendChild(userInfo);
+    movieHeader.appendChild(movieInfoContainer); 
+    movieHeader.appendChild(genreContainer);
+
+    movieBannerContainer.appendChild(movieImageDiv);
+    movieBannerContainer.appendChild(movieHeader);
+    movieDetails.appendChild(movieBannerContainer);
+    movieDetails.insertBefore(movieBannerContainer, movieDetails.firstChild);
 }
 
 movieInput.addEventListener('input', function(event) {
@@ -66,16 +129,13 @@ movieInput.addEventListener('focus', function(event) {
     optionsContainer.classList.add('show');
 });
 
-movieInput.addEventListener('focusout', function(event) {
-    optionsContainer.classList.remove('show');
-});
-
 searchBtn.addEventListener('click', function(event) {
     searchMovie()
 });
 
-errorDialogCloseButton.addEventListener('click', function(event) {
-    errorDialog.close();
+function clearInputs() {
+    movieDetails.innerHTML = '';
+    movieInput.value = '';
+    optionsContainer.innerHTML = '';
 }
-);  
   
